@@ -60,7 +60,15 @@ if ($_POST)
 	$unsafeName = strtolower($unsafeName);
 
 	$uploadDir = dirname(__FILE__) . '/uploads';
+	$realBase = realpath($uploadDir);
+
 	$uploadFile = $uploadDir . '/' . $unsafeName . '_' . basename($_FILES['photo']['name']);
+	$realUploadPath = realpath($uploadFile);
+
+	if ($realUploadPath === false || strcmp($realUploadPath, $realBase) !== 0 || strpos($realUploadPath, $realBase . DIRECTORY_SEPARATOR) !== 0)
+	{
+		throw new Exception('Bad name');
+	}
 
 	if ( ! move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile))
 	{
